@@ -120,7 +120,6 @@ function GameController(player1 = "Player 1", player2 = "Player 2") {
 
         let isWinner = false;
         for(i in victoryCombinations) {
-            // console.log(combination);
             isWinner = victoryCombinations[i].every((el) => indexArray.includes(el))
             if(isWinner) break;
         }
