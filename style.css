@@ -1,0 +1,63 @@
+* {
+    box-sizing: border-box;
+    font-family: "Noto Sans", sans-serif;
+    font-weight: 400;
+}
+
+body {
+    font-family: "Noto Sans", sans-serif;
+    position: relative;
+    min-height: 100vh;
+}
+
+.ui-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    width: min(80%, 600px);
+    min-height: 40vh;
+    background-color: rgb(217, 217, 217);
+    padding: 10px;
+    border-radius: 15px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.turn {
+    font-size: 2rem;
+}
+
+.board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    flex-grow: 1;
+    width: 100%;
+}
+
+.cell {
+    font-size: 5rem;
+    color: rgb(74, 74, 74);
+    background-color: inherit;
+    border: none;
+    border-bottom: 3px solid black;
+    border-right: 3px solid black;
+}
+
+/* .cell:last-child, .cell:nth-last-child(2), .cell:nth-last-child(3) {
+    border-bottom: none;
+} */
+
+.cell:nth-child(n+7) {
+    border-bottom: none;
+}
+
+.cell:nth-child(3n) {
+    border-right: none;
+}
