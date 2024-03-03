@@ -38,8 +38,10 @@ function GameBoard() {
     const getBoard = () => board;
 
     const playMove = (marker, row, column) => {
-        if(board[row][column].getMarker() !== "")
+        if(board[row][column].getMarker() !== "") {
+            console.log("hi");
             return -1;
+        }
 
         board[row][column].setMarker(marker);
         return 1;
@@ -131,7 +133,7 @@ function GameController(player1 = "Player 1", player2 = "Player 2") {
     const playRound = (row, column) => {
         let validMove = board.playMove(activePlayer.marker, row, column);
         if(validMove === -1) {
-            console.warn("Invalid move, please select a different cell.")
+            console.log("Invalid move, please select a different cell.");
             return -1;
         }
 
@@ -190,13 +192,12 @@ function ScreenController() {
         const selectedColumnIndex = e.target.dataset.columnIndex;
         warningH3.textContent = "";
 
-        if(!selectedRowIndex && !selectedColumnIndex) return;
-
-        let validRound = game.playRound(selectedRowIndex, selectedColumnIndex);
-        if(validRound === -1) {
+        if(!selectedRowIndex && !selectedColumnIndex) {
             warningH3.textContent = "Invalid move";
             return;
         }
+
+        game.playRound(selectedRowIndex, selectedColumnIndex);
         updateScreen(selectedRowIndex, selectedColumnIndex);
     }
 
