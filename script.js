@@ -42,6 +42,7 @@ function GameBoard() {
             return -1;
 
         board[row][column].setMarker(marker);
+        return 1;
     }
 
     const printBoard = () => {
@@ -128,7 +129,11 @@ function GameController(player1 = "Player 1", player2 = "Player 2") {
     }
 
     const playRound = (row, column) => {
-        board.playMove(activePlayer.marker, row, column);
+        let validMove = board.playMove(activePlayer.marker, row, column);
+        if(validMove === -1) {
+            console.warn("Invalid move, please select a different cell.")
+            return -1;
+        }
 
         if(checkWinner()) {
             board.printBoard();
@@ -139,14 +144,7 @@ function GameController(player1 = "Player 1", player2 = "Player 2") {
 
         switchActivePlayer();
         printNewRound();
-        // let move = getMoveInputConsole();
-        // playRound(move[0], move[1]);
     }
-
-    // First time running the game
-    // printNewRound();
-    // initialMoves = getMoveInputConsole();
-    // playRound(initialMoves[0], initialMoves[1]);
 
     return {
         playRound,
@@ -160,8 +158,9 @@ function ScreenController() {
     const game = GameController();
     const playerTurnH1 = document.querySelector(".turn");
     const boardDiv = document.querySelector(".board");
+    const warningH3 = document.querySelector(".warning")
 
-    const updateScreen = () => {
+    const updateScreen = (lastCellRowSelected, lastCellColumnSelected) => {
         boardDiv.textContent = "";
 
         board = game.getBoard();
@@ -173,7 +172,14 @@ function ScreenController() {
                 cellButton.classList.add("cell");
                 cellButton.dataset.rowIndex = rowIndex;
                 cellButton.dataset.columnIndex = columnIndex;
-                cellButton.textContent = cell.getMarker();
+
+                cellText = document.createElement("h5");
+                cellText.textContent = cell.getMarker();
+
+                if(columnIndex == lastCellColumnSelected && rowIndex == lastCellRowSelected)
+                    cellText.classList.add("fadeIn");
+
+                cellButton.appendChild(cellText);
                 boardDiv.appendChild(cellButton);
             })
         })
@@ -182,15 +188,20 @@ function ScreenController() {
     const clickHandlerBoard = (e) => {
         const selectedRowIndex = e.target.dataset.rowIndex;
         const selectedColumnIndex = e.target.dataset.columnIndex;
+        warningH3.textContent = "";
 
         if(!selectedRowIndex && !selectedColumnIndex) return;
 
-        game.playRound(selectedRowIndex, selectedColumnIndex);
-        updateScreen();
+        let validRound = game.playRound(selectedRowIndex, selectedColumnIndex);
+        if(validRound === -1) {
+            warningH3.textContent = "Invalid move";
+            return;
+        }
+        updateScreen(selectedRowIndex, selectedColumnIndex);
     }
 
     boardDiv.addEventListener("click", clickHandlerBoard);
-    updateScreen();
+    updateScreen(-1, -1);
 }
 
 ScreenController();

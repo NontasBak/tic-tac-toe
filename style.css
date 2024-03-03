@@ -4,6 +4,11 @@
     font-weight: 400;
 }
 
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
 body {
     font-family: "Noto Sans", sans-serif;
     position: relative;
@@ -18,7 +23,7 @@ body {
 
     width: min(80%, 600px);
     min-height: 40vh;
-    background-color: rgb(217, 217, 217);
+    background-color: rgb(233, 244, 255);
     padding: 10px;
     border-radius: 15px;
 
@@ -48,11 +53,12 @@ body {
     border: none;
     border-bottom: 3px solid black;
     border-right: 3px solid black;
+    
 }
 
-/* .cell:last-child, .cell:nth-last-child(2), .cell:nth-last-child(3) {
-    border-bottom: none;
-} */
+.fadeIn {
+    animation: fadeIn 1s;
+}
 
 .cell:nth-child(n+7) {
     border-bottom: none;
@@ -60,4 +66,10 @@ body {
 
 .cell:nth-child(3n) {
     border-right: none;
+}
+
+.warning {
+    color: rgb(223, 58, 58);
+    font-size: 1.5rem;
+    height: 2rem;
 }
