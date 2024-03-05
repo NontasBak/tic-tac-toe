@@ -15,13 +15,22 @@ body {
     min-height: 100vh;
 }
 
-.ui-container {
+.game-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-
     width: min(80%, 600px);
+}
+
+.ui-container {
+
+    width: 100%;
     min-height: 40vh;
     background-color: rgb(233, 244, 255);
     padding: 10px;
@@ -36,6 +45,7 @@ body {
 
 .turn {
     font-size: 2rem;
+    font-weight: 600;
 }
 
 .board {
@@ -72,4 +82,41 @@ body {
     color: rgb(223, 58, 58);
     font-size: 1.5rem;
     height: 2rem;
+}
+
+.winner-stats-container {
+    min-height: 13vh;
+    width: 100%;
+    padding: 10px;
+    border-radius: 15px;
+    text-align: center;
+    background-color: rgb(255, 233, 233);
+    
+    display: flex;
+    flex-direction: column;
+}
+
+.winner-stats-header {
+    flex: 1;
+    font-size: 2rem;
+    color: rgb(117, 23, 23);
+    font-weight: 500;
+}
+
+.player-stats-container {
+    flex: 1;
+    font-size: 1.8rem;
+    display: flex;
+    justify-content: space-around;
+    color: rgb(22, 22, 47);
+    align-items: center;
+}
+
+.player-stats-container > h3 {
+    width: 50%;
+    padding: 2vh 0;
+}
+
+.player-stats-container > h3:first-child {
+    border-right: 3px solid rgb(96, 96, 96);
 }

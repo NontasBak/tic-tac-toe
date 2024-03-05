@@ -65,11 +65,16 @@ function GameBoard() {
         })));
     }
 
+    const isFull = () => {
+        return board.every((row) => row.every((cell) => cell.getMarker() !== ""));
+    }
+
     return {
         getBoard,
         playMove,
         printBoard,
-        getAllIndex
+        getAllIndex,
+        isFull
     }
 }
 
@@ -79,21 +84,28 @@ function GameController(player1 = "Player 1", player2 = "Player 2") {
     const players = [
         {
             name: player1,
-            marker: "X"
+            marker: "X",
+            wins: 0
         },
         {
             name: player2,
-            marker: "O"
+            marker: "O",
+            wins: 0
         }
     ]
 
     let activePlayer = players[0];
+    let winner = null;
 
     const switchActivePlayer = () => {
         activePlayer = activePlayer === players[0] ? players[1] : players[0];
     }
 
     const getActivePlayer = () => activePlayer;
+
+    const getWinner = () => winner;
+
+    const getPlayers = () => players;
 
     const printNewRound = () => {
         board.printBoard();
@@ -138,9 +150,19 @@ function GameController(player1 = "Player 1", player2 = "Player 2") {
         }
 
         if(checkWinner()) {
+            winner = activePlayer;
+            activePlayer.wins++;
+
+            //console stuff below
             board.printBoard();
             console.log(`${activePlayer.name} won!`);
             console.log("--Game finished--");
+            return;
+        }
+
+        if(board.isFull()) {
+            players[0].wins++;
+            players[1].wins++;
             return;
         }
 
@@ -152,7 +174,10 @@ function GameController(player1 = "Player 1", player2 = "Player 2") {
         playRound,
         getMoveInputConsole,
         getActivePlayer,
-        getBoard: board.getBoard
+        getPlayers,
+        getBoard: board.getBoard,
+        getWinner,
+        boardIsFull: board.isFull
     }
 }
 
@@ -160,9 +185,10 @@ function ScreenController() {
     const game = GameController();
     const playerTurnH1 = document.querySelector(".turn");
     const boardDiv = document.querySelector(".board");
-    const warningH3 = document.querySelector(".warning")
+    const warningH3 = document.querySelector(".warning");
+    const winnerStatsDiv = document.querySelector(".winner-stats-container");
 
-    const updateScreen = (lastCellRowSelected, lastCellColumnSelected) => {
+    const updateBoardScreen = (lastCellRowSelected, lastCellColumnSelected) => {
         boardDiv.textContent = "";
 
         board = game.getBoard();
@@ -187,6 +213,22 @@ function ScreenController() {
         })
     }
 
+    const updateWinnerStatsScreen = () => {
+        const winnerStatsHeader = document.querySelector(".winner-stats-header");
+        const playerStatsDiv = document.querySelector(".player-stats-container");
+
+        playerStatsDiv.textContent = '';
+        winnerStatsHeader.textContent = '';
+        winnerStatsHeader.textContent = "Total wins:"
+
+        for(let i = 0; i < 2; i++) {
+            const playerStats = document.createElement("h3");
+            playerStats.textContent = `${game.getPlayers()[i].name}: ${game.getPlayers()[i].wins}`;
+
+            playerStatsDiv.appendChild(playerStats);
+        }
+    }
+
     const clickHandlerBoard = (e) => {
         const selectedRowIndex = e.target.dataset.rowIndex;
         const selectedColumnIndex = e.target.dataset.columnIndex;
@@ -198,11 +240,17 @@ function ScreenController() {
         }
 
         game.playRound(selectedRowIndex, selectedColumnIndex);
-        updateScreen(selectedRowIndex, selectedColumnIndex);
+        updateBoardScreen(selectedRowIndex, selectedColumnIndex);
+
+        if(game.getWinner() || game.boardIsFull()) {
+            boardDiv.removeEventListener("click", clickHandlerBoard)
+            updateWinnerStatsScreen();
+        }
     }
 
     boardDiv.addEventListener("click", clickHandlerBoard);
-    updateScreen(-1, -1);
+    updateBoardScreen(-1, -1);
+    updateWinnerStatsScreen();
 }
 
 ScreenController();
