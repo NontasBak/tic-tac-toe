@@ -187,6 +187,7 @@ function ScreenController() {
     const boardDiv = document.querySelector(".board");
     const warningH3 = document.querySelector(".warning");
     const winnerStatsDiv = document.querySelector(".winner-stats-container");
+    const gameContainer = document.querySelector(".game-container");
 
     const updateBoardScreen = (lastCellRowSelected, lastCellColumnSelected) => {
         boardDiv.textContent = "";
@@ -229,6 +230,22 @@ function ScreenController() {
         }
     }
 
+    const showWinnerMessage = () => {
+        const winnerMessageDiv = document.createElement("div");
+        winnerMessageDiv.classList.add("winner-message");
+        winnerMessageDiv.classList.add("visible");
+        const winnerMessage = document.createElement("h1");
+
+        winnerMessage.textContent = `${game.getActivePlayer().name} won!`;
+        playerTurnH1.textContent = `${game.getActivePlayer().name} won!`;
+        winnerMessageDiv.appendChild(winnerMessage);
+        gameContainer.appendChild(winnerMessageDiv);
+
+        winnerMessageDiv.addEventListener("click", () => {
+            winnerMessageDiv.remove();
+        })
+    }
+
     const clickHandlerBoard = (e) => {
         const selectedRowIndex = e.target.dataset.rowIndex;
         const selectedColumnIndex = e.target.dataset.columnIndex;
@@ -244,6 +261,7 @@ function ScreenController() {
 
         if(game.getWinner() || game.boardIsFull()) {
             boardDiv.removeEventListener("click", clickHandlerBoard)
+            showWinnerMessage();
             updateWinnerStatsScreen();
         }
     }
