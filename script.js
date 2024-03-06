@@ -237,8 +237,14 @@ function ScreenController() {
         winnerMessageDiv.classList.add("visible");
         const winnerMessage = document.createElement("h1");
 
-        winnerMessage.textContent = `${game.getActivePlayer().name} won!`;
-        playerTurnH1.textContent = `${game.getActivePlayer().name} won!`;
+        if(game.getWinner()) {
+            winnerMessage.textContent = `${game.getActivePlayer().name} won!`;
+            playerTurnH1.textContent = `${game.getActivePlayer().name} won!`;
+        }
+        else {
+            winnerMessage.textContent = `It's a draw`;
+            playerTurnH1.textContent = `It's a draw`;
+        }
         winnerMessageDiv.appendChild(winnerMessage);
         gameContainer.appendChild(winnerMessageDiv);
 
