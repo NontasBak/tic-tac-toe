@@ -247,12 +247,15 @@ function ScreenController() {
         }, 2000);
     }
 
-    const handleNameInputs = (e) => {
+    const handleNameInputs = () => {
         const player1NameInput = document.querySelector("#player-1");
         const player2NameInput = document.querySelector("#player-2");
         
         if(player1NameInput.value !== "") game.getPlayers()[0].name = player1NameInput.value;
-        if(player2NameInput.value !== "") game.getPlayers()[1].name = player2NameInput.value; 
+        if(player2NameInput.value !== "") game.getPlayers()[1].name = player2NameInput.value;
+
+        player1NameInput.value = "";
+        player2NameInput.value = "";
         updateWinnerStatsScreen();
     }
 
