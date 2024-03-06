@@ -25,13 +25,15 @@ function GameBoard() {
 
     let board = [];
     
-    for(let i = 0; i < size; i++)
-    {
-        board[i] = []
-        for(let j = 0; j < size; j++)
+    const fillBoardwithCells = () => {
+        for(let i = 0; i < size; i++)
         {
-            board[i][j] = Cell();
-            board[i][j].setIndex(3*i + j);
+            board[i] = []
+            for(let j = 0; j < size; j++)
+            {
+                board[i][j] = Cell();
+                board[i][j].setIndex(3*i + j);
+            }
         }
     }
 
@@ -69,12 +71,20 @@ function GameBoard() {
         return board.every((row) => row.every((cell) => cell.getMarker() !== ""));
     }
 
+    const clearBoard = () => {
+        board = []
+        fillBoardwithCells();
+    }
+
+    fillBoardwithCells();
+
     return {
         getBoard,
         playMove,
         printBoard,
         getAllIndex,
-        isFull
+        isFull,
+        clearBoard
     }
 }
 
@@ -95,6 +105,7 @@ function GameController(player1 = "Player 1", player2 = "Player 2") {
     ]
 
     let activePlayer = players[0];
+    let firstMoveActivePlayer = players[0];
     let winner = null;
 
     const switchActivePlayer = () => {
@@ -103,7 +114,16 @@ function GameController(player1 = "Player 1", player2 = "Player 2") {
 
     const getActivePlayer = () => activePlayer;
 
+    const getGameBoard = () => board;
+
     const getWinner = () => winner;
+
+    const resetWinner = () => winner = null;
+
+    const setFirstMoveActivePlayer = () => {
+        firstMoveActivePlayer = firstMoveActivePlayer === players[0] ? players[1] : players[0];
+        activePlayer = firstMoveActivePlayer;
+    }
 
     const getPlayers = () => players;
 
@@ -170,6 +190,8 @@ function GameController(player1 = "Player 1", player2 = "Player 2") {
         printNewRound();
     }
 
+    
+
     return {
         playRound,
         getMoveInputConsole,
@@ -177,7 +199,10 @@ function GameController(player1 = "Player 1", player2 = "Player 2") {
         getPlayers,
         getBoard: board.getBoard,
         getWinner,
-        boardIsFull: board.isFull
+        boardIsFull: board.isFull,
+        getGameBoard,
+        resetWinner,
+        setFirstMoveActivePlayer
     }
 }
 
@@ -189,6 +214,7 @@ function ScreenController() {
     const winnerStatsDiv = document.querySelector(".winner-stats-container");
     const gameContainer = document.querySelector(".game-container");
     const confirmButton = document.querySelector(".confirm");
+    const buttonsContainerDiv = document.querySelector(".buttons-container");
 
     const updateBoardScreen = (lastCellRowSelected, lastCellColumnSelected) => {
         boardDiv.textContent = "";
@@ -265,6 +291,16 @@ function ScreenController() {
         updateWinnerStatsScreen();
     }
 
+    const clickPlayAgainHandler = () => {
+        game.getGameBoard().clearBoard();
+        boardDiv.addEventListener("click", clickHandlerBoard);
+        updateBoardScreen();
+
+        const playAgainButton = document.querySelector(".play-again");
+        playAgainButton.removeEventListener("click", clickPlayAgainHandler);
+        playAgainButton.classList.add("grayscale-filter");
+    }
+
     const clickHandlerBoard = (e) => {
         const selectedRowIndex = e.target.dataset.rowIndex;
         const selectedColumnIndex = e.target.dataset.columnIndex;
@@ -282,12 +318,19 @@ function ScreenController() {
             boardDiv.removeEventListener("click", clickHandlerBoard)
             showWinnerMessage();
             updateWinnerStatsScreen();
+
+            game.resetWinner();
+            game.setFirstMoveActivePlayer();
+
+            const playAgainButton = document.querySelector(".play-again");
+            playAgainButton.classList.remove("grayscale-filter");
+            playAgainButton.addEventListener("click", clickPlayAgainHandler);
         }
     }
 
     boardDiv.addEventListener("click", clickHandlerBoard);
     confirmButton.addEventListener("click", handleNameInputs);
-    updateBoardScreen(-1, -1);
+    updateBoardScreen();
     updateWinnerStatsScreen();
 }
 

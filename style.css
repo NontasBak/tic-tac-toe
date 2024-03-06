@@ -213,3 +213,33 @@ label {
 .confirm:active {
     filter: hue-rotate(120deg) saturate(5);
 }
+
+.buttons-container {
+    min-height: 6vh;
+    width: 100%;
+    padding: 10px;
+    font-size: 1.3rem;
+
+    display: flex;
+    gap: 10px;
+    justify-content: space-around;
+}
+
+.buttons-container > button {
+    padding: 1rem 2rem;
+    border-radius: 10px;
+    font-weight: 700;
+    color: white;
+}
+
+.buttons-container > .play-again {
+    background-color: rgb(62, 87, 131);
+}
+
+.buttons-container > .reset-scores {
+    background-color: rgb(94, 130, 94);
+}
+
+.grayscale-filter {
+    filter: grayscale();
+}
