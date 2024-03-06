@@ -241,9 +241,9 @@ function ScreenController() {
         winnerMessageDiv.appendChild(winnerMessage);
         gameContainer.appendChild(winnerMessageDiv);
 
-        winnerMessageDiv.addEventListener("click", () => {
-            winnerMessageDiv.remove();
-        })
+        setTimeout(() => {
+            winnerMessageDiv.classList.add("hidden");
+        }, 2000);
     }
 
     const clickHandlerBoard = (e) => {
