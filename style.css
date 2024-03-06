@@ -147,3 +147,69 @@ body {
     opacity: 0;
     transition: visibility 0s 1.5s, opacity 1s linear;
 }
+
+.name-inputs-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    flex-wrap: wrap;
+    min-height: 5vh;
+    width: 100%;
+}
+
+form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-around;
+    gap: 10px;
+
+    flex: 1 1 0;
+    font-size: 1.1rem;
+    padding: 10px;
+    border-radius: 15px;
+    background-color: rgb(234, 240, 255);
+}
+
+.input-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    flex-grow: 1;
+    max-width: min(90%, 100%);
+}
+
+input {
+    padding: 0.3rem;
+    flex-grow: 1;
+    width: auto;
+    font-size: 1.1rem;
+}
+
+label {
+    font-weight: 500;
+    color: rgb(19, 8, 57);
+}
+
+.confirm {
+    background-image: url(green_checkmark.svg);
+    background-color: white;
+    background-repeat: no-repeat;
+    /* width: 2rem; */
+    min-height: 2rem;
+    padding: max(6%, 25px);
+
+    flex: 1 1 1;
+}
+
+.confirm:hover {
+    filter: saturate(2);
+}
+
+.confirm:active {
+    filter: saturate(3);
+}
