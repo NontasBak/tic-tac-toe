@@ -199,7 +199,7 @@ label {
     background-image: url(green_checkmark.svg);
     background-color: white;
     background-repeat: no-repeat;
-    /* width: 2rem; */
+    filter: hue-rotate(120deg);
     min-height: 2rem;
     padding: max(6%, 25px);
 
@@ -207,9 +207,9 @@ label {
 }
 
 .confirm:hover {
-    filter: saturate(2);
+    filter: hue-rotate(120deg) saturate(3);
 }
 
 .confirm:active {
-    filter: saturate(3);
+    filter: hue-rotate(120deg) saturate(5);
 }
