@@ -188,6 +188,7 @@ function ScreenController() {
     const warningH3 = document.querySelector(".warning");
     const winnerStatsDiv = document.querySelector(".winner-stats-container");
     const gameContainer = document.querySelector(".game-container");
+    const confirmButton = document.querySelector(".confirm");
 
     const updateBoardScreen = (lastCellRowSelected, lastCellColumnSelected) => {
         boardDiv.textContent = "";
@@ -246,6 +247,15 @@ function ScreenController() {
         }, 2000);
     }
 
+    const handleNameInputs = (e) => {
+        const player1NameInput = document.querySelector("#player-1");
+        const player2NameInput = document.querySelector("#player-2");
+        
+        if(player1NameInput.value !== "") game.getPlayers()[0].name = player1NameInput.value;
+        if(player2NameInput.value !== "") game.getPlayers()[1].name = player2NameInput.value; 
+        updateWinnerStatsScreen();
+    }
+
     const clickHandlerBoard = (e) => {
         const selectedRowIndex = e.target.dataset.rowIndex;
         const selectedColumnIndex = e.target.dataset.columnIndex;
@@ -267,6 +277,7 @@ function ScreenController() {
     }
 
     boardDiv.addEventListener("click", clickHandlerBoard);
+    confirmButton.addEventListener("click", handleNameInputs);
     updateBoardScreen(-1, -1);
     updateWinnerStatsScreen();
 }
