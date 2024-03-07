@@ -255,3 +255,8 @@ label {
 .grayscale-filter {
     filter: grayscale();
 }
+
+.credits {
+    font-size: 0.7rem;
+    color: rgb(145, 145, 145);
+}
