@@ -207,7 +207,7 @@ function GameController(player1 = "Player 1", player2 = "Player 2") {
 }
 
 function ScreenController() {
-    const game = GameController();
+    let game = GameController();
     const playerTurnH1 = document.querySelector(".turn");
     const boardDiv = document.querySelector(".board");
     const warningH3 = document.querySelector(".warning");
@@ -215,6 +215,7 @@ function ScreenController() {
     const gameContainer = document.querySelector(".game-container");
     const confirmButton = document.querySelector(".confirm");
     const buttonsContainerDiv = document.querySelector(".buttons-container");
+    const resetButton = document.querySelector(".reset-scores");
 
     const updateBoardScreen = (lastCellRowSelected, lastCellColumnSelected) => {
         boardDiv.textContent = "";
@@ -301,6 +302,16 @@ function ScreenController() {
         playAgainButton.classList.add("grayscale-filter");
     }
 
+    const clickResetHandler = () => {
+        game = GameController(); //reset game
+        updateBoardScreen();
+        updateWinnerStatsScreen();
+        boardDiv.addEventListener("click", clickHandlerBoard);
+
+        const playAgainButton = document.querySelector(".play-again");
+        playAgainButton.classList.add("grayscale-filter");
+    }
+
     const clickHandlerBoard = (e) => {
         const selectedRowIndex = e.target.dataset.rowIndex;
         const selectedColumnIndex = e.target.dataset.columnIndex;
@@ -330,6 +341,7 @@ function ScreenController() {
 
     boardDiv.addEventListener("click", clickHandlerBoard);
     confirmButton.addEventListener("click", handleNameInputs);
+    resetButton.addEventListener("click", clickResetHandler);
     updateBoardScreen();
     updateWinnerStatsScreen();
 }
