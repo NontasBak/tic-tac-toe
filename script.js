@@ -365,7 +365,7 @@ function ScreenController() {
         if(!game.gameFinished())  
             {
                 setTimeout(() => {
-                    if(game.gameFinished())
+                    if(game.gameFinished() || game.getActivePlayer() === game.getPlayers()[0])
                         return;
                     updateWarningScreen(1);
                 }, 30);
