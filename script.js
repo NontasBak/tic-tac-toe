@@ -121,6 +121,10 @@ function GameController(player1 = "Player 1", player2 = "Player 2") {
 
     const resetWinner = () => winner = null;
 
+    const gameFinished = () => {
+        return (winner || board.isFull());
+    }
+
     const setFirstMoveActivePlayer = () => {
         firstMoveActivePlayer = firstMoveActivePlayer === players[0] ? players[1] : players[0];
         activePlayer = firstMoveActivePlayer;
@@ -201,7 +205,8 @@ function GameController(player1 = "Player 1", player2 = "Player 2") {
         boardIsFull: board.isFull,
         getGameBoard,
         resetWinner,
-        setFirstMoveActivePlayer
+        setFirstMoveActivePlayer,
+        gameFinished
     }
 }
 
@@ -240,6 +245,19 @@ function ScreenController() {
                 boardDiv.appendChild(cellButton);
             })
         })
+    }
+
+    const updateWarningScreen = (num) => {
+        //0 = invalid move
+        //1 = bot is thinking
+        //2 = reset screen
+
+        if(num === 0)
+            warningH3.textContent = "Invalid move";
+        else if(num === 1)
+            warningH3.textContent = "Bot is thinking...";
+        else if(num === 2)
+            warningH3.textContent = "";           
     }
 
     const updateWinnerStatsScreen = () => {
@@ -294,6 +312,7 @@ function ScreenController() {
     }
 
     const clickPlayAgainHandler = () => {
+        game.resetWinner();
         game.getGameBoard().clearBoard();
         boardDiv.addEventListener("click", clickHandlerBoard);
         updateBoardScreen();
@@ -308,34 +327,65 @@ function ScreenController() {
 
     const clickResetHandler = () => {
         game = GameController(); //reset game
+        updateWarningScreen(2);
         updateBoardScreen();
         updateWinnerStatsScreen();
         boardDiv.addEventListener("click", clickHandlerBoard);
 
+        //reset play again button
         const playAgainButton = document.querySelector(".play-again");
         playAgainButton.classList.add("grayscale-filter");
+
+        //reset vs bot button
+        VSBotButton.textContent = "VS BOT";
+        boardDiv.removeEventListener("click", playBotMove);
+        VSBotButton.addEventListener("click", clickVSBotHandler);
     }
 
     const clickVSBotHandler = () => {
         game.player2IsBot = true;
+        VSBotButton.textContent = "VS BOT ✓";
+        VSBotButton.removeEventListener("click", clickVSBotHandler);
 
-        boardDiv.addEventListener("click", () => {
-            setTimeout(playRandomMove, 2500);
+        //In case the user click the vs bot button after player 1 has already played
+        if(game.getActivePlayer() === game.getPlayers()[1])
+            playBotMove();
+
+        boardDiv.addEventListener("click", playBotMove);
+
+        VSBotButton.addEventListener("click", () => {
+            game.player2IsBot = false;
+            VSBotButton.textContent = "VS BOT";
+            boardDiv.removeEventListener("click", playBotMove);
+            VSBotButton.addEventListener("click", clickVSBotHandler);
         })
+    }
+
+    const playBotMove = () => {
+        if(!game.gameFinished())  
+            {
+                setTimeout(() => {
+                    if(game.gameFinished())
+                        return;
+                    updateWarningScreen(1);
+                }, 30);
+            }
+        setTimeout(playRandomMove, 1500);
     }
 
     const playRandomMove = () => {
         const runRandomMove = () => {
             let randomRow = Math.floor(Math.random() * 3);
             let randomColumn = Math.floor(Math.random() * 3);
-            console.log(randomRow);
-            console.log(randomColumn);
 
             return [randomRow, randomColumn];
         }
 
-        if(gameFinished()) return;
+        //edge case with input buffer (after ||)
+        if(game.gameFinished() || game.getActivePlayer() === game.getPlayers()[0])
+            return;
 
+        updateWarningScreen(2);
         let randomMove;
         do {
             randomMove = runRandomMove();
@@ -345,17 +395,12 @@ function ScreenController() {
         handleEndGameState();
     }
 
-    const gameFinished = () => {
-        return (game.getWinner() || game.boardIsFull());
-    }
-
     const handleEndGameState = () => {
-        if(gameFinished()) {
+        if(game.gameFinished()) {
             boardDiv.removeEventListener("click", clickHandlerBoard)
             showWinnerMessage();
             updateWinnerStatsScreen();
 
-            game.resetWinner();
             game.setFirstMoveActivePlayer();
 
             const playAgainButton = document.querySelector(".play-again");
@@ -367,13 +412,15 @@ function ScreenController() {
     const clickHandlerBoard = (e) => {
         const selectedRowIndex = e.target.dataset.rowIndex;
         const selectedColumnIndex = e.target.dataset.columnIndex;
-        warningH3.textContent = "";
+        updateWarningScreen(2);
 
         //if there's a marker already, e.target will target the marker and not the cell
         if(!selectedRowIndex && !selectedColumnIndex) {
-            warningH3.textContent = "Invalid move";
+            updateWarningScreen(0);
             return;
         }
+        else if(game.player2IsBot && game.getActivePlayer() === game.getPlayers()[1])
+            return;
 
         game.playRound(selectedRowIndex, selectedColumnIndex);
         updateBoardScreen(selectedRowIndex, selectedColumnIndex);
