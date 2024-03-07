@@ -107,6 +107,7 @@ function GameController(player1 = "Player 1", player2 = "Player 2") {
     let activePlayer = players[0];
     let firstMoveActivePlayer = players[0];
     let winner = null;
+    let player2IsBot = false;
 
     const switchActivePlayer = () => {
         activePlayer = activePlayer === players[0] ? players[1] : players[0];
@@ -214,6 +215,7 @@ function ScreenController() {
     const confirmButton = document.querySelector(".confirm");
     const buttonsContainerDiv = document.querySelector(".buttons-container");
     const resetButton = document.querySelector(".reset-scores");
+    const VSBotButton = document.querySelector(".bot-button");
 
     const updateBoardScreen = (lastCellRowSelected, lastCellColumnSelected) => {
         boardDiv.textContent = "";
@@ -296,6 +298,9 @@ function ScreenController() {
         boardDiv.addEventListener("click", clickHandlerBoard);
         updateBoardScreen();
 
+        if(game.player2IsBot && game.getActivePlayer() === game.getPlayers()[1])
+            playRandomMove(); 
+
         const playAgainButton = document.querySelector(".play-again");
         playAgainButton.removeEventListener("click", clickPlayAgainHandler);
         playAgainButton.classList.add("grayscale-filter");
@@ -311,20 +316,41 @@ function ScreenController() {
         playAgainButton.classList.add("grayscale-filter");
     }
 
-    const clickHandlerBoard = (e) => {
-        const selectedRowIndex = e.target.dataset.rowIndex;
-        const selectedColumnIndex = e.target.dataset.columnIndex;
-        warningH3.textContent = "";
+    const clickVSBotHandler = () => {
+        game.player2IsBot = true;
 
-        if(!selectedRowIndex && !selectedColumnIndex) {
-            warningH3.textContent = "Invalid move";
-            return;
+        boardDiv.addEventListener("click", () => {
+            setTimeout(playRandomMove, 2500);
+        })
+    }
+
+    const playRandomMove = () => {
+        const runRandomMove = () => {
+            let randomRow = Math.floor(Math.random() * 3);
+            let randomColumn = Math.floor(Math.random() * 3);
+            console.log(randomRow);
+            console.log(randomColumn);
+
+            return [randomRow, randomColumn];
         }
 
-        game.playRound(selectedRowIndex, selectedColumnIndex);
-        updateBoardScreen(selectedRowIndex, selectedColumnIndex);
+        if(gameFinished()) return;
 
-        if(game.getWinner() || game.boardIsFull()) {
+        let randomMove;
+        do {
+            randomMove = runRandomMove();
+        } while(game.getBoard()[randomMove[0]][randomMove[1]].getMarker() != '');
+        game.playRound(randomMove[0], randomMove[1]);
+        updateBoardScreen(randomMove[0], randomMove[1]);
+        handleEndGameState();
+    }
+
+    const gameFinished = () => {
+        return (game.getWinner() || game.boardIsFull());
+    }
+
+    const handleEndGameState = () => {
+        if(gameFinished()) {
             boardDiv.removeEventListener("click", clickHandlerBoard)
             showWinnerMessage();
             updateWinnerStatsScreen();
@@ -338,9 +364,27 @@ function ScreenController() {
         }
     }
 
+    const clickHandlerBoard = (e) => {
+        const selectedRowIndex = e.target.dataset.rowIndex;
+        const selectedColumnIndex = e.target.dataset.columnIndex;
+        warningH3.textContent = "";
+
+        //if there's a marker already, e.target will target the marker and not the cell
+        if(!selectedRowIndex && !selectedColumnIndex) {
+            warningH3.textContent = "Invalid move";
+            return;
+        }
+
+        game.playRound(selectedRowIndex, selectedColumnIndex);
+        updateBoardScreen(selectedRowIndex, selectedColumnIndex);
+
+        handleEndGameState();
+    }
+
     boardDiv.addEventListener("click", clickHandlerBoard);
     confirmButton.addEventListener("click", handleNameInputs);
     resetButton.addEventListener("click", clickResetHandler);
+    VSBotButton.addEventListener("click", clickVSBotHandler);
     updateBoardScreen();
     updateWinnerStatsScreen();
 }
