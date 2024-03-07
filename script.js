@@ -190,8 +190,6 @@ function GameController(player1 = "Player 1", player2 = "Player 2") {
         printNewRound();
     }
 
-    
-
     return {
         playRound,
         getMoveInputConsole,
@@ -221,7 +219,7 @@ function ScreenController() {
         boardDiv.textContent = "";
 
         board = game.getBoard();
-        playerTurnH1.textContent = `${game.getActivePlayer().name}'s turn:`
+        playerTurnH1.textContent = `${game.getActivePlayer().name}'s turn (${game.getActivePlayer().marker}):`;
 
         board.forEach((row, rowIndex) => {
             row.forEach((cell, columnIndex) => {
@@ -252,7 +250,8 @@ function ScreenController() {
 
         for(let i = 0; i < 2; i++) {
             const playerStats = document.createElement("h3");
-            playerStats.textContent = `${game.getPlayers()[i].name}: ${game.getPlayers()[i].wins}`;
+            let winsUI = `<span style='font-size: 2rem; font-weight: 600;'> ${game.getPlayers()[i].wins}</span>`;
+            playerStats.innerHTML = `${game.getPlayers()[i].name}:` + winsUI;
 
             playerStatsDiv.appendChild(playerStats);
         }
