@@ -9,6 +9,10 @@
     100% { opacity: 1; }
 }
 
+:root {
+    font-size: clamp(8px, 2vh - 2px, 20px);
+}
+
 body {
     font-family: "Noto Sans", sans-serif;
     position: relative;
